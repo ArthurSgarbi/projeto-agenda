@@ -111,6 +111,7 @@ print(agenda_txt(**agenda))
 ele possa guardar as informações dos contatos e que ele 
 possa escolher o que fazer sem ser de forma automatica pelo python."""
 
+#função de incluir contato
 def usuario_inclui_contato(agenda:dict):
     nome = input("Informe o novo nome do novo contato que será inserido na agenda: ")
     dicionario_formas = {}
@@ -128,3 +129,38 @@ def usuario_inclui_contato(agenda:dict):
         print("Inclusão bem sucedida!!!")
     else:
         print("É necessário incluir pelo menos uma forma de contato! \nA agenda não foi alterada.")
+
+#função de incluir uma forma de contato
+def usuario_inclui_forma_contato(agenda:dict):
+    nome = input("Informe o nome do contato que deseja incluir a forma de contato ")
+    if nome in agenda.keys():
+        print(f"As formas de contato suportadas pelo sistema são: {contatos_suportados}")
+        forma_incluida = input("Qual a forma de contato deseja incluir? ")
+        if forma_incluida in contatos_suportados:
+            valor_incluido = input(f"Informe o {forma_incluida} que deseja incluir: ")
+            if inclui_forma_contato(agenda[nome], forma_incluida, valor_incluido):
+                print("Operação bem sucedida! A nova forma de contato foi incluída!!! ")
+            else:
+                print("Ocorreu um erro durante a inserção. A agenda não foi alterada.")
+        else:
+            print("A forma de contato indicada não é suportada pelo sistema. A agenda não foi alterada.")
+    else:
+        print("O contato informado não existe na agenda. Não foram feitas alterações. ")
+
+#função de excluir contato
+def usuario_exclui_contato(agenda:dict):
+    nome = input("Informe o contato que deseja excluir: ")
+    if exclui_contato(agenda, nome):
+        print("Usuário excluido com sucesso!")
+    else:
+        print("Nome de usuário não encontrado. Não foram feitas alterações")
+
+#função que altera contato
+def usuario_altera_nome_contato(agenda:dict):
+    nome_original = input("Informe o nome do contato que deseja alterar: ")
+    nome_atualizado = input("Informe o nome que deseja colocar: ")
+    if altera_nome(agenda, nome_original, nome_atualizado):
+        print(f"O contato foi atualizado para {nome_atualizado}!")
+    else:
+        print(f"O contato original não foi localizado. A agenda não foi alterada.")
+
