@@ -31,13 +31,100 @@ def contato_txt(nome_contato:str, **formas_contato):
 #teste
 print(contato_txt("pessoa1", **agenda["pessoa1"]))
 
-#função de ver toda a agenda
+#função de ver toda a agenda utilizando a outra função
 def agenda_txt(**agenda_completa):
     formato_texto = ""
     for nome_contato, formas_contato in agenda_completa.items():
         formato_texto = f"{formato_texto} {contato_txt(nome_contato, **formas_contato)}\n"
-        formas_contato = f"{formato_texto}---------------------------------------------------\n"
+        formas_contato = f"{formato_texto}"
+        formato_texto += "---------------------------------------------------\n"
     return formato_texto
 
 #teste
 print(agenda_txt(**agenda))
+
+"""Agora vamos ver as funções que são necessárias para fazer 
+alguma alteração na agenda como o nome que seria a chave e o 
+número/email/endereço que seria os valores do dicionário"""
+
+#função para alterar o nome
+def altera_nome(agenda_original:dict, nome_original:str, nome_atualizado:str):
+    if nome_original in agenda_original.keys():
+        copia_contatos = agenda_original[nome_original].copy()
+        agenda_original.pop(nome_original)
+        agenda_original[nome_atualizado] = copia_contatos
+        return True
+    return False
+
+#teste
+altera_nome(agenda, "pessoa2", "Super pessoa")
+print(agenda_txt(**agenda))
+
+#função que altera a forma do contato
+def altera_forma(lista_contato:list, antigo:str, novo:str):
+    if antigo in lista_contato:
+        posicao_antigo = lista_contato.index(antigo)
+        lista_contato.pop(posicao_antigo)
+        lista_contato.insert(posicao_antigo, novo)
+        return True
+    return False
+
+altera_forma(agenda["pessoa1"]["telefone"], "11 99999-9999", "11 98765-4321")
+print(agenda_txt(**agenda))
+
+"""A partir daqui as funções são para excluir contatos
+ou incluir contatos e suas formas de se comunicar!"""
+
+#função para excluir um contato
+def exclui_contato(agenda:dict, nome_contato:str):
+    if nome_contato in agenda.keys():
+        agenda.pop(nome_contato)
+        return True
+    return False
+
+#teste
+exclui_contato(agenda, "Super pessoa")
+print(agenda_txt(**agenda))
+
+#função de incluir contato
+def inclui_contato(agenda:dict, nome_contato:str, **formas_contato):
+    agenda[nome_contato] = formas_contato
+
+#teste
+inclui_contato(agenda, "Anninha", telefone=["11 98768-9442"], email=["a@b.com"])
+print(agenda_txt(**agenda))
+
+def inclui_forma_contato(formas_contato:dict, forma_incluida:str, valor_incluido:str):
+    if forma_incluida in formas_contato.keys():
+        formas_contato[forma_incluida].append(valor_incluido)
+        return True
+    elif forma_incluida in contatos_suportados:
+        formas_contato[forma_incluida] = [valor_incluido]
+        return True
+    return False
+
+#teste
+inclui_forma_contato(agenda["Anninha"], "endereco", "Rua das Polianas")
+print(agenda_txt(**agenda))
+
+"""Agora aqui vem as interações com o usuário para que 
+ele possa guardar as informações dos contatos e que ele 
+possa escolher o que fazer sem ser de forma automatica pelo python."""
+
+def usuario_inclui_contato(agenda:dict):
+    nome = input("Informe o novo nome do novo contato que será inserido na agenda: ")
+    dicionario_formas = {}
+    for forma in contatos_suportados:
+        resposta = input(f"Deseja inserir um {forma} para {nome.upper()}? \nSIM ou NÃO -> ")
+        lista_contatos = []
+        while "S" in resposta.upper():
+            lista_contatos.append(input(f"Informe um {forma}: "))
+            resposta = input(f"Deseja inserir outro {forma} para {nome.upper()}? \nSIM ou NÃO -> ")
+        if len(lista_contatos) > 0:
+            dicionario_formas[forma] = lista_contatos.copy()
+            lista_contatos.clear()
+    if len(dicionario_formas.keys()) > 0:
+        inclui_contato(agenda, nome, **dicionario_formas)
+        print("Inclusão bem sucedida!!!")
+    else:
+        print("É necessário incluir pelo menos uma forma de contato! \nA agenda não foi alterada.")
