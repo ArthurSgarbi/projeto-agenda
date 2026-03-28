@@ -1,0 +1,1 @@
+Projeto que inclui e exclui um contato da agenda, podendo também alterar o nome e a forma dele. Podemos visualizar o contato ou só a agenda, exportar a agenda para um texto ou para arquivos JSON.
