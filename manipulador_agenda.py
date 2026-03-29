@@ -29,7 +29,7 @@ def contato_txt(nome_contato:str, **formas_contato):
     return formato_texto
 
 #teste
-print(contato_txt("pessoa1", **agenda["pessoa1"]))
+"""print(contato_txt("pessoa1", **agenda["pessoa1"]))"""
 
 #função de ver toda a agenda utilizando a outra função
 def agenda_txt(**agenda_completa):
@@ -41,7 +41,7 @@ def agenda_txt(**agenda_completa):
     return formato_texto
 
 #teste
-print(agenda_txt(**agenda))
+"""print(agenda_txt(**agenda))"""
 
 """Agora vamos ver as funções que são necessárias para fazer 
 alguma alteração na agenda como o nome que seria a chave e o 
@@ -57,8 +57,8 @@ def altera_nome(agenda_original:dict, nome_original:str, nome_atualizado:str):
     return False
 
 #teste
-altera_nome(agenda, "pessoa2", "Super pessoa")
-print(agenda_txt(**agenda))
+"""altera_nome(agenda, "pessoa2", "Super pessoa")
+print(agenda_txt(**agenda))"""
 
 #função que altera a forma do contato
 def altera_forma(lista_contato:list, antigo:str, novo:str):
@@ -69,8 +69,8 @@ def altera_forma(lista_contato:list, antigo:str, novo:str):
         return True
     return False
 
-altera_forma(agenda["pessoa1"]["telefone"], "11 99999-9999", "11 98765-4321")
-print(agenda_txt(**agenda))
+"""altera_forma(agenda["pessoa1"]["telefone"], "11 99999-9999", "11 98765-4321")
+print(agenda_txt(**agenda))"""
 
 """A partir daqui as funções são para excluir contatos
 ou incluir contatos e suas formas de se comunicar!"""
@@ -83,16 +83,16 @@ def exclui_contato(agenda:dict, nome_contato:str):
     return False
 
 #teste
-exclui_contato(agenda, "Super pessoa")
-print(agenda_txt(**agenda))
+"""exclui_contato(agenda, "Super pessoa")
+print(agenda_txt(**agenda))"""
 
 #função de incluir contato
 def inclui_contato(agenda:dict, nome_contato:str, **formas_contato):
     agenda[nome_contato] = formas_contato
 
 #teste
-inclui_contato(agenda, "Anninha", telefone=["11 98768-9442"], email=["a@b.com"])
-print(agenda_txt(**agenda))
+"""inclui_contato(agenda, "Anninha", telefone=["11 98768-9442"], email=["a@b.com"])
+print(agenda_txt(**agenda))"""
 
 def inclui_forma_contato(formas_contato:dict, forma_incluida:str, valor_incluido:str):
     if forma_incluida in formas_contato.keys():
@@ -104,8 +104,8 @@ def inclui_forma_contato(formas_contato:dict, forma_incluida:str, valor_incluido
     return False
 
 #teste
-inclui_forma_contato(agenda["Anninha"], "endereco", "Rua das Polianas")
-print(agenda_txt(**agenda))
+"""inclui_forma_contato(agenda["Anninha"], "endereco", "Rua das Polianas")
+print(agenda_txt(**agenda))"""
 
 """Agora aqui vem as interações com o usuário para que 
 ele possa guardar as informações dos contatos e que ele 
@@ -164,3 +164,101 @@ def usuario_altera_nome_contato(agenda:dict):
     else:
         print(f"O contato original não foi localizado. A agenda não foi alterada.")
 
+def usuario_altera_forma_contato(agenda:dict):
+    nome = input("Informe o nome do contato que deseja alterar: ")
+    if nome in agenda.keys():
+        print(f"As formas de contato suportadas pelo sistema são: {contatos_suportados}")
+        forma_incluida = input("Qual forma de contato deseja incluir: ")
+        if forma_incluida in contatos_suportados:
+            print(contato_txt(nome, **agenda[nome]))
+            antigo = input(f"Informe o {forma_incluida} que deseja alterar: ")
+            novo_valor = input(f"Informe o novo {forma_incluida} ")
+            if altera_forma(agenda[nome][forma_incluida], antigo, novo_valor):
+                print("Contato alterado com sucesso!")
+            else:
+                print("Ocorreu um erro durante a alteração do contato. A mudança não ocorreu.")
+        else:
+            print(f"{forma_incluida} não é uma forma de contato suportada pelo sistema. A agenda não foi alterada.")
+    else:
+        print(f"O contato {nome} não está na agenda. A agenda não foi alterada.")
+
+def usuario_contato_txt(agenda:dict):
+    nome = input("Informe o nome do contato que deseja exibir: ")
+    if nome in agenda.keys():
+        print(contato_txt(nome, **agenda[nome]))
+    else:
+        print("O contato informado não está na agenda.")
+
+def exibe_menu():
+    print("\n\n")
+    print("1 - Incluir contato na agenda")
+    print("2 - Incluir uma forma de contato")
+    print("3 - Alterar o nome de um contato")
+    print("4 - Alterar uma forma de contato")
+    print("5 - Exibir um contato")
+    print("6 - Exibir toda a agenda")
+    print("7 - Excluir um contato")
+    print("8 - Exportar agenda para txt")
+    print("9 - Exportar agenda para JSON")
+    print("10 - Importar agenda para JSON")
+    print("11 - Sair")
+    print("\n")
+
+def manipulador_agenda():
+    agenda = {}
+    op = 1
+    while op != 11:
+        exibe_menu()
+        op = int(input("Informe a opção desejada: "))
+        if op == 1:
+            usuario_inclui_contato(agenda)
+        elif op == 2:
+            usuario_inclui_forma_contato(agenda)
+        elif op == 3:
+            usuario_altera_nome_contato(agenda)
+        elif op == 4:
+            usuario_altera_forma_contato(agenda)
+        elif op == 5:
+            usuario_contato_txt(agenda)
+        elif op == 6:
+            print(agenda_txt(**agenda))
+        elif op == 7:
+            usuario_exclui_contato(agenda)
+        elif op == 8:
+            nome_arquivo = input("Informe o nome ou o caminho do arquivo: ")
+            agenda_txt(nome_arquivo, agenda)
+        elif op == 9:
+            nome_arquivo = input("Informe o caminho ou nome do arquivo: ")
+            agenda_json(nome_arquivo, agenda)
+        elif op == 10:
+            nome_arquivo = input("Informe o nome ou caminho do arquivo: ")
+            agenda = json_agenda(nome_arquivo)
+        elif op == 11:
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção invalida, tente novamente!")
+
+manipulador_agenda()
+
+def agenda_forma_txt(nome_arquivo:str, agenda):
+    if "txt" not in nome_arquivo:
+        nome_arquivo = f"{nome_arquivo}.txt"
+    with open(nome_arquivo, "w", encoding="UTF-8") as arquivo:
+        arquivo.write(agenda_txt(**agenda))
+        print("Agenda exportada com sucesso!")
+
+import json
+
+def json_agenda(nome_arquivo:str):
+    with open(nome_arquivo, "r", encoding="UTF-8") as arquivo:
+        conteudo = arquivo.read()
+    print("Agenda carregada com sucesso!")
+    return json.loads(conteudo)
+
+def agenda_json(nome_arquivo:str):
+    if ".json" not in nome_arquivo:
+        nome_arquivo = f"{nome_arquivo}.json"
+    with open(nome_arquivo, "w", encoding="UTF-8") as arquivo:
+        arquivo.write(json.dumps(agenda, indent=4, ensure_ascii=False))
+        print("Agenda exportada com sucesso!")
